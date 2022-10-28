@@ -60,9 +60,7 @@ impl Lexer {
     }
 
     fn skip_whitespace(&mut self) {
-        let temp: char = self.ch.unwrap();
-
-        while temp == ' ' || temp == '\t' || temp == '\n' || temp == '\r' {
+        while self.ch.map(char::is_whitespace).unwrap_or_default() {
             self.read_char();
         }
     }
@@ -71,8 +69,6 @@ impl Lexer {
         let ch = self.ch.unwrap();
 
         self.skip_whitespace();
-
-        println!("we're past the whitespace skipping");
 
         let token = match ch {
             '=' => Token {
