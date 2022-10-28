@@ -42,12 +42,37 @@ impl Lexer {
         return self.input[position..self.position].to_string();
     }
 
+    fn read_number(&mut self) -> String {
+        let position = self.position;
+        while self.is_digit(self.ch.unwrap()) {
+            self.read_char();
+        }
+        // TODO: Investigate the below - strings in rust are UTF-8
+        return self.input[position..self.position].to_string();
+    }
+
     fn is_letter(&mut self, ch: char) -> bool {
         ch.is_alphabetic() || ch == '_'
     }
 
+    fn is_digit(&mut self, ch: char) -> bool {
+        ch.is_numeric()
+    }
+
+    fn skip_whitespace(&mut self) {
+        let temp: char = self.ch.unwrap();
+
+        while temp == ' ' || temp == '\t' || temp == '\n' || temp == '\r' {
+            self.read_char();
+        }
+    }
+
     pub fn next_token(&mut self) -> Token {
         let ch = self.ch.unwrap();
+
+        self.skip_whitespace();
+
+        println!("we're past the whitespace skipping");
 
         let token = match ch {
             '=' => Token {
@@ -88,6 +113,11 @@ impl Lexer {
                     Token {
                         token_type: lookup_ident(literal.as_str()),
                         literal,
+                    }
+                } else if self.is_digit(ch) {
+                    Token {
+                        token_type: TokenType::Int,
+                        literal: self.read_number(),
                     }
                 } else {
                     Token {
