@@ -1,34 +1,33 @@
-use token::TokenType;
+use token::{Token, TokenType};
 
 mod lexer;
 mod token;
 
 fn main() {
     // TODO: We will use this to run the REPL
-
     println!("This is the marmoset language interpreter");
 
     let input = String::from("let marmoset = 1337;");
     let mut lexer = lexer::Lexer::new(input);
 
-    let expected_results: Vec<token::Token> = vec![
-        token::Token {
+    let expected_results: Vec<Token> = vec![
+        Token {
             token_type: TokenType::Let,
             literal: String::from("let"),
         },
-        token::Token {
+        Token {
             token_type: TokenType::Identifier,
             literal: String::from("testing"),
         },
-        token::Token {
-            token_type: TokenType::Assign,
+        Token {
+            token_type: TokenType::Assignment,
             literal: String::from("="),
         },
-        token::Token {
+        Token {
             token_type: TokenType::Integer,
             literal: String::from("5"),
         },
-        token::Token {
+        Token {
             token_type: TokenType::Semicolon,
             literal: String::from(";"),
         },
@@ -47,7 +46,7 @@ fn main() {
 // The below flag will mark the functio to be ignored by the compiler
 // From: https://stackoverflow.com/questions/32900809/how-to-suppress-function-is-never-used-warning-for-a-function-used-by-tests
 #[cfg(test)]
-fn assert_expected_results(input: String, expected_results: Vec<token::Token>) {
+fn assert_expected_results(input: String, expected_results: Vec<Token>) {
     let mut lexer = lexer::Lexer::new(input);
 
     for result in expected_results {
@@ -64,27 +63,12 @@ fn assert_expected_results(input: String, expected_results: Vec<token::Token>) {
 fn test_next_token_simple() {
     let input = String::from("let testing =5;");
 
-    let expected_results: Vec<token::Token> = vec![
-        token::Token {
-            token_type: TokenType::Let,
-            literal: String::from("let"),
-        },
-        token::Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("testing"),
-        },
-        token::Token {
-            token_type: TokenType::Assign,
-            literal: String::from("="),
-        },
-        token::Token {
-            token_type: TokenType::Integer,
-            literal: String::from("5"),
-        },
-        token::Token {
-            token_type: TokenType::Semicolon,
-            literal: String::from(";"),
-        },
+    let expected_results: Vec<Token> = vec![
+        Token::new(TokenType::Let, "let"),
+        Token::new(TokenType::Identifier, "testing"),
+        Token::new(TokenType::Assignment, "="),
+        Token::new(TokenType::Integer, "5"),
+        Token::new(TokenType::Semicolon, ";"),
     ];
 
     assert_expected_results(input, expected_results);
@@ -95,39 +79,15 @@ fn test_next_token_simple() {
 fn test_next_token_1() {
     let input = String::from("=+(){},;");
 
-    let expected_results: Vec<token::Token> = vec![
-        token::Token {
-            token_type: TokenType::Assign,
-            literal: String::from("="),
-        },
-        token::Token {
-            token_type: TokenType::Plus,
-            literal: String::from("+"),
-        },
-        token::Token {
-            token_type: TokenType::LeftParen,
-            literal: String::from("("),
-        },
-        token::Token {
-            token_type: TokenType::RightParen,
-            literal: String::from(")"),
-        },
-        token::Token {
-            token_type: TokenType::LeftBrace,
-            literal: String::from("{"),
-        },
-        token::Token {
-            token_type: TokenType::RightBrace,
-            literal: String::from("}"),
-        },
-        token::Token {
-            token_type: TokenType::Comma,
-            literal: String::from(","),
-        },
-        token::Token {
-            token_type: TokenType::Semicolon,
-            literal: String::from(";"),
-        },
+    let expected_results: Vec<Token> = vec![
+        Token::new(TokenType::Assignment, "="),
+        Token::new(TokenType::Plus, "+"),
+        Token::new(TokenType::LeftParen, "("),
+        Token::new(TokenType::RightParen, ")"),
+        Token::new(TokenType::LeftBrace, "{"),
+        Token::new(TokenType::RightBrace, "}"),
+        Token::new(TokenType::Comma, ","),
+        Token::new(TokenType::Semicolon, ";"),
     ];
 
     assert_expected_results(input, expected_results);
@@ -144,111 +104,33 @@ let add = fn(x, y) {
 };",
     );
 
-    let expected_results: Vec<token::Token> = vec![
-        token::Token {
-            token_type: TokenType::Let,
-            literal: String::from("let"),
-        },
-        token::Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("five"),
-        },
-        token::Token {
-            token_type: TokenType::Assign,
-            literal: String::from("="),
-        },
-        token::Token {
-            token_type: TokenType::Integer,
-            literal: String::from("5"),
-        },
-        token::Token {
-            token_type: TokenType::Semicolon,
-            literal: String::from(";"),
-        },
-        token::Token {
-            token_type: TokenType::Let,
-            literal: String::from("let"),
-        },
-        token::Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("ten"),
-        },
-        token::Token {
-            token_type: TokenType::Assign,
-            literal: String::from("="),
-        },
-        token::Token {
-            token_type: TokenType::Integer,
-            literal: String::from("10"),
-        },
-        token::Token {
-            token_type: TokenType::Semicolon,
-            literal: String::from(";"),
-        },
-        token::Token {
-            token_type: TokenType::Let,
-            literal: String::from("let"),
-        },
-        token::Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("add"),
-        },
-        token::Token {
-            token_type: TokenType::Assign,
-            literal: String::from("="),
-        },
-        token::Token {
-            token_type: TokenType::Function,
-            literal: String::from("fn"),
-        },
-        token::Token {
-            token_type: TokenType::LeftParen,
-            literal: String::from("("),
-        },
-        token::Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("x"),
-        },
-        token::Token {
-            token_type: TokenType::Comma,
-            literal: String::from(","),
-        },
-        token::Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("y"),
-        },
-        token::Token {
-            token_type: TokenType::RightParen,
-            literal: String::from(")"),
-        },
-        token::Token {
-            token_type: TokenType::LeftBrace,
-            literal: String::from("{"),
-        },
-        token::Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("x"),
-        },
-        token::Token {
-            token_type: TokenType::Plus,
-            literal: String::from("+"),
-        },
-        token::Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("y"),
-        },
-        token::Token {
-            token_type: TokenType::Semicolon,
-            literal: String::from(";"),
-        },
-        token::Token {
-            token_type: TokenType::RightBrace,
-            literal: String::from("}"),
-        },
-        token::Token {
-            token_type: TokenType::Semicolon,
-            literal: String::from(";"),
-        },
+    let expected_results: Vec<Token> = vec![
+        Token::new(TokenType::Let, "let"),
+        Token::new(TokenType::Identifier, "five"),
+        Token::new(TokenType::Assignment, "="),
+        Token::new(TokenType::Integer, "5"),
+        Token::new(TokenType::Semicolon, ";"),
+        Token::new(TokenType::Let, "let"),
+        Token::new(TokenType::Identifier, "ten"),
+        Token::new(TokenType::Assignment, "="),
+        Token::new(TokenType::Integer, "10"),
+        Token::new(TokenType::Semicolon, ";"),
+        Token::new(TokenType::Let, "let"),
+        Token::new(TokenType::Identifier, "add"),
+        Token::new(TokenType::Assignment, "="),
+        Token::new(TokenType::Function, "fn"),
+        Token::new(TokenType::LeftParen, "("),
+        Token::new(TokenType::Identifier, "x"),
+        Token::new(TokenType::Comma, ","),
+        Token::new(TokenType::Identifier, "y"),
+        Token::new(TokenType::RightParen, ")"),
+        Token::new(TokenType::LeftBrace, "{"),
+        Token::new(TokenType::Identifier, "x"),
+        Token::new(TokenType::Plus, "+"),
+        Token::new(TokenType::Identifier, "y"),
+        Token::new(TokenType::Semicolon, ";"),
+        Token::new(TokenType::RightBrace, "}"),
+        Token::new(TokenType::Semicolon, ";"),
     ];
 
     assert_expected_results(input, expected_results);

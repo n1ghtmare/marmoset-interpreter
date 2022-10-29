@@ -2,7 +2,7 @@
 pub enum TokenType {
     Identifier,
     Integer,
-    Assign,
+    Assignment,
     Plus,
     Comma,
     Semicolon,
@@ -20,9 +20,18 @@ pub struct Token {
     pub literal: String,
 }
 
+impl Token {
+    pub fn new(token_type: TokenType, literal: &str) -> Self {
+        Token {
+            token_type,
+            literal: literal.to_string(),
+        }
+    }
+}
+
 pub fn lookup_token(name: &str) -> TokenType {
     match name {
-        "=" => TokenType::Assign,
+        "=" => TokenType::Assignment,
         ";" => TokenType::Semicolon,
         "," => TokenType::Comma,
         "+" => TokenType::Plus,
