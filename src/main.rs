@@ -11,26 +11,11 @@ fn main() {
     let mut lexer = lexer::Lexer::new(input);
 
     let expected_results: Vec<Token> = vec![
-        Token {
-            token_type: TokenType::Let,
-            literal: String::from("let"),
-        },
-        Token {
-            token_type: TokenType::Identifier,
-            literal: String::from("testing"),
-        },
-        Token {
-            token_type: TokenType::Assignment,
-            literal: String::from("="),
-        },
-        Token {
-            token_type: TokenType::Integer,
-            literal: String::from("5"),
-        },
-        Token {
-            token_type: TokenType::Semicolon,
-            literal: String::from(";"),
-        },
+        Token::new(TokenType::Let, "let"),
+        Token::new(TokenType::Identifier, "testing"),
+        Token::new(TokenType::Assignment, "="),
+        Token::new(TokenType::Integer, "5"),
+        Token::new(TokenType::Semicolon, ";"),
     ];
 
     for result in expected_results {
@@ -60,7 +45,7 @@ fn assert_expected_results(input: String, expected_results: Vec<Token>) {
 
 // #[ignore]
 #[test]
-fn test_next_token_simple() {
+fn test_single_variable_binding() {
     let input = String::from("let testing =5;");
 
     let expected_results: Vec<Token> = vec![
@@ -76,7 +61,7 @@ fn test_next_token_simple() {
 
 // #[ignore]
 #[test]
-fn test_next_token_1() {
+fn test_single_character_tokens() {
     let input = String::from("=+(){},;");
 
     let expected_results: Vec<Token> = vec![
@@ -95,7 +80,7 @@ fn test_next_token_1() {
 
 // #[ignore]
 #[test]
-fn test_next_token_2() {
+fn test_multiline_statements_with_keywords() {
     let input = String::from(
         "let five = 5;
 let ten = 10;
