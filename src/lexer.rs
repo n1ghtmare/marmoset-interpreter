@@ -1,4 +1,4 @@
-use crate::token::{lookup_ident, Token, TokenType};
+use crate::token::{lookup_token, Token, TokenType};
 
 pub struct Lexer {
     input: String,
@@ -59,72 +59,55 @@ impl Lexer {
         ch.is_numeric()
     }
 
+    fn is_known_single(&mut self, ch: char) -> bool {
+        let known_chars: Vec<char> = vec!['=', ';', '(', ')', ',', '+', '{', '}'];
+        known_chars.contains(&ch)
+    }
+
     fn skip_whitespace(&mut self) {
         while self.ch.map(char::is_whitespace).unwrap_or_default() {
             self.read_char();
         }
     }
 
-    pub fn next_token(&mut self) -> Token {
-        let ch = self.ch.unwrap();
+    fn process_char(&mut self, ch: char) -> Token {
+        if self.is_known_single(ch) {
+            self.read_char();
+            let literal = ch.to_string();
+            Token {
+                token_type: lookup_token(literal.as_str()),
+                literal,
+            }
+        } else if self.is_letter(ch) {
+            let literal = self.read_identifier();
+            Token {
+                token_type: lookup_token(literal.as_str()),
+                literal,
+            }
+        } else if self.is_digit(ch) {
+            Token {
+                token_type: TokenType::Integer,
+                literal: self.read_number(),
+            }
+        } else {
+            Token {
+                token_type: TokenType::Illegal,
+                literal: String::from("illegal"),
+            }
+        }
+    }
 
+    pub fn next_token(&mut self) -> Token {
         self.skip_whitespace();
 
-        let token = match ch {
-            '=' => Token {
-                token_type: TokenType::Assign,
-                literal: ch.to_string(),
+        let result: Token = match self.ch {
+            Some(ch) => self.process_char(ch),
+            None => Token {
+                token_type: TokenType::Illegal,
+                literal: String::from("illegal"),
             },
-            ';' => Token {
-                token_type: TokenType::Semicolon,
-                literal: ch.to_string(),
-            },
-            '(' => Token {
-                token_type: TokenType::Lparen,
-                literal: ch.to_string(),
-            },
-            ')' => Token {
-                token_type: TokenType::Rparen,
-                literal: ch.to_string(),
-            },
-            ',' => Token {
-                token_type: TokenType::Comma,
-                literal: ch.to_string(),
-            },
-            '+' => Token {
-                token_type: TokenType::Plus,
-                literal: ch.to_string(),
-            },
-            '{' => Token {
-                token_type: TokenType::Lbrace,
-                literal: ch.to_string(),
-            },
-            '}' => Token {
-                token_type: TokenType::Rbrace,
-                literal: ch.to_string(),
-            },
-            _ => {
-                if self.is_letter(ch) {
-                    let literal = self.read_identifier();
-                    Token {
-                        token_type: lookup_ident(literal.as_str()),
-                        literal,
-                    }
-                } else if self.is_digit(ch) {
-                    Token {
-                        token_type: TokenType::Int,
-                        literal: self.read_number(),
-                    }
-                } else {
-                    Token {
-                        token_type: TokenType::Illegal,
-                        literal: ch.to_string(),
-                    }
-                }
-            }
         };
 
-        self.read_char();
-        return token;
+        return result;
     }
 }

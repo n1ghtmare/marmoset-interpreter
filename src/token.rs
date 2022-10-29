@@ -1,34 +1,37 @@
-use std::collections::HashMap;
-
 #[derive(PartialEq, Debug, Clone)]
 pub enum TokenType {
-    Eof,
-    Ident,
-    Int,
+    Identifier,
+    Integer,
     Assign,
     Plus,
     Comma,
     Semicolon,
-    Lparen,
-    Rparen,
-    Lbrace,
-    Rbrace,
+    LeftParen,
+    RightParen,
+    LeftBrace,
+    RightBrace,
     Function,
     Let,
     Illegal,
 }
-
-// type TokenType = String;
 
 pub struct Token {
     pub token_type: TokenType,
     pub literal: String,
 }
 
-pub fn lookup_ident(name: &str) -> TokenType {
+pub fn lookup_token(name: &str) -> TokenType {
     match name {
+        "=" => TokenType::Assign,
+        ";" => TokenType::Semicolon,
+        "," => TokenType::Comma,
+        "+" => TokenType::Plus,
+        "(" => TokenType::LeftParen,
+        ")" => TokenType::RightParen,
+        "{" => TokenType::LeftBrace,
+        "}" => TokenType::RightBrace,
         "fn" => TokenType::Function,
         "let" => TokenType::Let,
-        _ => TokenType::Ident,
+        _ => TokenType::Identifier,
     }
 }
