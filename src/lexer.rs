@@ -1,4 +1,4 @@
-use crate::token::{lookup_token, Token, TokenType};
+use crate::token::*;
 
 pub struct Lexer {
     input: String,
@@ -75,13 +75,13 @@ impl Lexer {
             self.read_char();
             let literal = ch.to_string();
             Token {
-                token_type: lookup_token(literal.as_str()),
+                token_type: Token::lookup_token(literal.as_str()),
                 literal,
             }
         } else if self.is_letter(ch) {
             let literal = self.read_identifier();
             Token {
-                token_type: lookup_token(literal.as_str()),
+                token_type: Token::lookup_token(literal.as_str()),
                 literal,
             }
         } else if self.is_digit(ch) {

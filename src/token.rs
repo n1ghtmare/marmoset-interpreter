@@ -20,6 +20,8 @@ pub struct Token {
     pub literal: String,
 }
 
+use TokenType::*;
+
 impl Token {
     pub fn new(token_type: TokenType, literal: &str) -> Self {
         Token {
@@ -27,20 +29,20 @@ impl Token {
             literal: literal.to_string(),
         }
     }
-}
 
-pub fn lookup_token(name: &str) -> TokenType {
-    match name {
-        "=" => TokenType::Assignment,
-        ";" => TokenType::Semicolon,
-        "," => TokenType::Comma,
-        "+" => TokenType::Plus,
-        "(" => TokenType::LeftParen,
-        ")" => TokenType::RightParen,
-        "{" => TokenType::LeftBrace,
-        "}" => TokenType::RightBrace,
-        "fn" => TokenType::Function,
-        "let" => TokenType::Let,
-        _ => TokenType::Identifier,
+    pub fn lookup_token(name: &str) -> TokenType {
+        match name {
+            "=" => Assignment,
+            ";" => Semicolon,
+            "," => Comma,
+            "+" => Plus,
+            "(" => LeftParen,
+            ")" => RightParen,
+            "{" => LeftBrace,
+            "}" => RightBrace,
+            "fn" => Function,
+            "let" => Let,
+            _ => Identifier,
+        }
     }
 }

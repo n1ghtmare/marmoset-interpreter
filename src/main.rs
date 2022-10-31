@@ -1,7 +1,8 @@
-use token::{Token, TokenType};
-
 mod lexer;
 mod token;
+
+use token::*;
+use TokenType::*;
 
 fn main() {
     // TODO: We will use this to run the REPL
@@ -11,11 +12,11 @@ fn main() {
     let mut lexer = lexer::Lexer::new(input);
 
     let expected_results: Vec<Token> = vec![
-        Token::new(TokenType::Let, "let"),
-        Token::new(TokenType::Identifier, "testing"),
-        Token::new(TokenType::Assignment, "="),
-        Token::new(TokenType::Integer, "5"),
-        Token::new(TokenType::Semicolon, ";"),
+        Token::new(Let, "let"),
+        Token::new(Identifier, "testing"),
+        Token::new(Assignment, "="),
+        Token::new(Integer, "5"),
+        Token::new(Semicolon, ";"),
     ];
 
     for result in expected_results {
@@ -49,11 +50,11 @@ fn test_single_variable_binding() {
     let input = String::from("let testing =5;");
 
     let expected_results: Vec<Token> = vec![
-        Token::new(TokenType::Let, "let"),
-        Token::new(TokenType::Identifier, "testing"),
-        Token::new(TokenType::Assignment, "="),
-        Token::new(TokenType::Integer, "5"),
-        Token::new(TokenType::Semicolon, ";"),
+        Token::new(Let, "let"),
+        Token::new(Identifier, "testing"),
+        Token::new(Assignment, "="),
+        Token::new(Integer, "5"),
+        Token::new(Semicolon, ";"),
     ];
 
     assert_expected_results(input, expected_results);
@@ -65,14 +66,14 @@ fn test_single_character_tokens() {
     let input = String::from("=+(){},;");
 
     let expected_results: Vec<Token> = vec![
-        Token::new(TokenType::Assignment, "="),
-        Token::new(TokenType::Plus, "+"),
-        Token::new(TokenType::LeftParen, "("),
-        Token::new(TokenType::RightParen, ")"),
-        Token::new(TokenType::LeftBrace, "{"),
-        Token::new(TokenType::RightBrace, "}"),
-        Token::new(TokenType::Comma, ","),
-        Token::new(TokenType::Semicolon, ";"),
+        Token::new(Assignment, "="),
+        Token::new(Plus, "+"),
+        Token::new(LeftParen, "("),
+        Token::new(RightParen, ")"),
+        Token::new(LeftBrace, "{"),
+        Token::new(RightBrace, "}"),
+        Token::new(Comma, ","),
+        Token::new(Semicolon, ";"),
     ];
 
     assert_expected_results(input, expected_results);
@@ -90,32 +91,32 @@ let add = fn(x, y) {
     );
 
     let expected_results: Vec<Token> = vec![
-        Token::new(TokenType::Let, "let"),
-        Token::new(TokenType::Identifier, "five"),
-        Token::new(TokenType::Assignment, "="),
-        Token::new(TokenType::Integer, "5"),
-        Token::new(TokenType::Semicolon, ";"),
-        Token::new(TokenType::Let, "let"),
-        Token::new(TokenType::Identifier, "ten"),
-        Token::new(TokenType::Assignment, "="),
-        Token::new(TokenType::Integer, "10"),
-        Token::new(TokenType::Semicolon, ";"),
-        Token::new(TokenType::Let, "let"),
-        Token::new(TokenType::Identifier, "add"),
-        Token::new(TokenType::Assignment, "="),
-        Token::new(TokenType::Function, "fn"),
-        Token::new(TokenType::LeftParen, "("),
-        Token::new(TokenType::Identifier, "x"),
-        Token::new(TokenType::Comma, ","),
-        Token::new(TokenType::Identifier, "y"),
-        Token::new(TokenType::RightParen, ")"),
-        Token::new(TokenType::LeftBrace, "{"),
-        Token::new(TokenType::Identifier, "x"),
-        Token::new(TokenType::Plus, "+"),
-        Token::new(TokenType::Identifier, "y"),
-        Token::new(TokenType::Semicolon, ";"),
-        Token::new(TokenType::RightBrace, "}"),
-        Token::new(TokenType::Semicolon, ";"),
+        Token::new(Let, "let"),
+        Token::new(Identifier, "five"),
+        Token::new(Assignment, "="),
+        Token::new(Integer, "5"),
+        Token::new(Semicolon, ";"),
+        Token::new(Let, "let"),
+        Token::new(Identifier, "ten"),
+        Token::new(Assignment, "="),
+        Token::new(Integer, "10"),
+        Token::new(Semicolon, ";"),
+        Token::new(Let, "let"),
+        Token::new(Identifier, "add"),
+        Token::new(Assignment, "="),
+        Token::new(Function, "fn"),
+        Token::new(LeftParen, "("),
+        Token::new(Identifier, "x"),
+        Token::new(Comma, ","),
+        Token::new(Identifier, "y"),
+        Token::new(RightParen, ")"),
+        Token::new(LeftBrace, "{"),
+        Token::new(Identifier, "x"),
+        Token::new(Plus, "+"),
+        Token::new(Identifier, "y"),
+        Token::new(Semicolon, ";"),
+        Token::new(RightBrace, "}"),
+        Token::new(Semicolon, ";"),
     ];
 
     assert_expected_results(input, expected_results);
