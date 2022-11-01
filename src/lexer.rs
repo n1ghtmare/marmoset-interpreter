@@ -40,7 +40,7 @@ impl Lexer {
             len += 1;
             self.read_char();
         }
-        // TODO: Investigate the below - strings in rust are UTF-8
+
         return self
             .input
             .chars()
@@ -56,7 +56,7 @@ impl Lexer {
             len += 1;
             self.read_char();
         }
-        // TODO: Investigate the below - strings in rust are UTF-8
+
         return self
             .input
             .chars()
