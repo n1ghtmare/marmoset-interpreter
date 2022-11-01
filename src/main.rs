@@ -47,11 +47,26 @@ fn assert_expected_results(input: String, expected_results: Vec<Token>) {
 // #[ignore]
 #[test]
 fn test_single_variable_binding() {
-    let input = String::from("let testing =5;");
+    let input = String::from("let _testing_a = 5;");
 
     let expected_results: Vec<Token> = vec![
         Token::new(Let, "let"),
-        Token::new(Identifier, "testing"),
+        Token::new(Identifier, "_testing_a"),
+        Token::new(Assignment, "="),
+        Token::new(Integer, "5"),
+        Token::new(Semicolon, ";"),
+    ];
+
+    assert_expected_results(input, expected_results);
+}
+
+#[test]
+fn test_multi_byte_chars() {
+    let input = String::from("let 猿猿 = 5;");
+
+    let expected_results: Vec<Token> = vec![
+        Token::new(Let, "let"),
+        Token::new(Identifier, "猿猿"),
         Token::new(Assignment, "="),
         Token::new(Integer, "5"),
         Token::new(Semicolon, ";"),

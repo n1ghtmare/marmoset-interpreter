@@ -35,20 +35,34 @@ impl Lexer {
 
     fn read_identifier(&mut self) -> String {
         let position = self.position;
+        let mut len = 0;
         while self.is_letter(self.ch.unwrap()) {
+            len += 1;
             self.read_char();
         }
         // TODO: Investigate the below - strings in rust are UTF-8
-        return self.input[position..self.position].to_string();
+        return self
+            .input
+            .chars()
+            .skip(position)
+            .take(len)
+            .collect::<String>();
     }
 
     fn read_number(&mut self) -> String {
         let position = self.position;
+        let mut len = 0;
         while self.is_digit(self.ch.unwrap()) {
+            len += 1;
             self.read_char();
         }
         // TODO: Investigate the below - strings in rust are UTF-8
-        return self.input[position..self.position].to_string();
+        return self
+            .input
+            .chars()
+            .skip(position)
+            .take(len)
+            .collect::<String>();
     }
 
     fn is_letter(&mut self, ch: char) -> bool {
