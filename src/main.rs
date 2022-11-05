@@ -1,4 +1,6 @@
+mod ast;
 mod lexer;
+mod parser;
 mod token;
 
 use token::*;
@@ -15,7 +17,7 @@ fn main() {
         Token::new(Let, "let"),
         Token::new(Identifier, "testing"),
         Token::new(Assignment, "="),
-        Token::new(Integer, "5"),
+        Token::new(Integer, "1337"),
         Token::new(Semicolon, ";"),
     ];
 
