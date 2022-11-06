@@ -22,7 +22,7 @@ fn main() {
     ];
 
     for result in expected_results {
-        let tok = lexer.next_token();
+        let tok = lexer.next_token().unwrap();
         println!("literal: {}", tok.literal);
 
         dbg!(tok.token_type, result.token_type);
@@ -34,16 +34,23 @@ fn main() {
 // The below flag will mark the functio to be ignored by the compiler
 // From: https://stackoverflow.com/questions/32900809/how-to-suppress-function-is-never-used-warning-for-a-function-used-by-tests
 #[cfg(test)]
+use pretty_assertions::assert_eq;
+
+#[cfg(test)]
 fn assert_expected_results(input: String, expected_results: Vec<Token>) {
-    let mut lexer = lexer::Lexer::new(input);
+    let lexer = lexer::Lexer::new(input);
+    let tokens: Vec<Token> = lexer.into_iter().collect();
 
-    for result in expected_results {
-        let tok = lexer.next_token();
-        // println!("literal: {}", tok.literal);
+    assert_eq!(expected_results, tokens);
+}
 
-        assert_eq!(tok.token_type, result.token_type);
-        assert_eq!(tok.literal, result.literal);
-    }
+#[test]
+fn test_equality_operators() {
+    let input = String::from("!= ==");
+
+    let expected_results: Vec<Token> = vec![Token::new(NotEqual, "!="), Token::new(Equal, "==")];
+
+    assert_expected_results(input, expected_results);
 }
 
 // #[ignore]
@@ -62,6 +69,24 @@ fn test_single_variable_binding() {
     assert_expected_results(input, expected_results);
 }
 
+// #[ignore]
+#[test]
+fn testing_if_statement() {
+    let input = String::from("if (5 < 10)");
+
+    let expected_results: Vec<Token> = vec![
+        Token::new(If, "if"),
+        Token::new(LeftParen, "("),
+        Token::new(Integer, "5"),
+        Token::new(LowerThan, "<"),
+        Token::new(Integer, "10"),
+        Token::new(RightParen, ")"),
+    ];
+
+    assert_expected_results(input, expected_results);
+}
+
+// #[ignore]
 #[test]
 fn test_multi_byte_chars() {
     let input = String::from("let 猿猿 = 5;");
@@ -133,6 +158,110 @@ let add = fn(x, y) {
         Token::new(Identifier, "y"),
         Token::new(Semicolon, ";"),
         Token::new(RightBrace, "}"),
+        Token::new(Semicolon, ";"),
+    ];
+
+    assert_expected_results(input, expected_results);
+}
+
+// #[ignore]
+#[test]
+fn test_multiline_statements_with_keywords_extended() {
+    let input = String::from(
+        "let five = 5;
+let ten = 10;
+
+let add = fn(x, y) {
+    x + y;
+};
+
+let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
+
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}
+
+10 == 10;
+10 != 9;",
+    );
+
+    let expected_results: Vec<Token> = vec![
+        Token::new(Let, "let"),
+        Token::new(Identifier, "five"),
+        Token::new(Assignment, "="),
+        Token::new(Integer, "5"),
+        Token::new(Semicolon, ";"),
+        Token::new(Let, "let"),
+        Token::new(Identifier, "ten"),
+        Token::new(Assignment, "="),
+        Token::new(Integer, "10"),
+        Token::new(Semicolon, ";"),
+        Token::new(Let, "let"),
+        Token::new(Identifier, "add"),
+        Token::new(Assignment, "="),
+        Token::new(Function, "fn"),
+        Token::new(LeftParen, "("),
+        Token::new(Identifier, "x"),
+        Token::new(Comma, ","),
+        Token::new(Identifier, "y"),
+        Token::new(RightParen, ")"),
+        Token::new(LeftBrace, "{"),
+        Token::new(Identifier, "x"),
+        Token::new(Plus, "+"),
+        Token::new(Identifier, "y"),
+        Token::new(Semicolon, ";"),
+        Token::new(RightBrace, "}"),
+        Token::new(Semicolon, ";"),
+        Token::new(Let, "let"),
+        Token::new(Identifier, "result"),
+        Token::new(Assignment, "="),
+        Token::new(Identifier, "add"),
+        Token::new(LeftParen, "("),
+        Token::new(Identifier, "five"),
+        Token::new(Comma, ","),
+        Token::new(Identifier, "ten"),
+        Token::new(RightParen, ")"),
+        Token::new(Semicolon, ";"),
+        Token::new(Bang, "!"),
+        Token::new(Minus, "-"),
+        Token::new(Slash, "/"),
+        Token::new(Asterisk, "*"),
+        Token::new(Integer, "5"),
+        Token::new(Semicolon, ";"),
+        Token::new(Integer, "5"),
+        Token::new(LowerThan, "<"),
+        Token::new(Integer, "10"),
+        Token::new(GreaterThan, ">"),
+        Token::new(Integer, "5"),
+        Token::new(Semicolon, ";"),
+        Token::new(If, "if"),
+        Token::new(LeftParen, "("),
+        Token::new(Integer, "5"),
+        Token::new(LowerThan, "<"),
+        Token::new(Integer, "10"),
+        Token::new(RightParen, ")"),
+        Token::new(LeftBrace, "{"),
+        Token::new(Return, "return"),
+        Token::new(True, "true"),
+        Token::new(Semicolon, ";"),
+        Token::new(RightBrace, "}"),
+        Token::new(Else, "else"),
+        Token::new(LeftBrace, "{"),
+        Token::new(Return, "return"),
+        Token::new(False, "false"),
+        Token::new(Semicolon, ";"),
+        Token::new(RightBrace, "}"),
+        Token::new(Integer, "10"),
+        Token::new(Equal, "=="),
+        Token::new(Integer, "10"),
+        Token::new(Semicolon, ";"),
+        Token::new(Integer, "10"),
+        Token::new(NotEqual, "!="),
+        Token::new(Integer, "9"),
         Token::new(Semicolon, ";"),
     ];
 

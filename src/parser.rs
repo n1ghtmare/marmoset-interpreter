@@ -21,19 +21,20 @@ impl Parser {
     }
 
     fn next_token(&mut self) {
-        self.current_token = self.peek_token.clone();
-        self.peek_token = Some(self.lexer.next_token());
+        // self.current_token = self.peek_token.clone();
+        // self.peek_token = Some(self.lexer.next_token());
     }
 
     fn parse_program(&self) -> Program {
         let program = Program { statements: vec![] };
 
-        while self.current_token.clone().unwrap().token_type != TokenType::Eof {
-            let statement = self.parse_statement();
-            if statement.is_some() {
-                program.statements.push(statement);
-            }
-        }
+        todo!();
+        // while self.current_token.clone().unwrap().token_type != TokenType::Eof {
+        //     let statement = self.parse_statement();
+        //     if statement.is_some() {
+        //         // program.statements.push(statement);
+        //     }
+        // }
         program
     }
 
@@ -42,9 +43,10 @@ impl Parser {
             return None;
         }
 
+        todo!();
         let token = self.current_token.unwrap();
         match token.token_type {
-            TokenType::Let => self.parse_let_statement(),
+            TokenType::Let => todo!(),
             _ => None,
         }
     }

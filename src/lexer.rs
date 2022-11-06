@@ -7,6 +7,14 @@ pub struct Lexer {
     ch: Option<char>,
 }
 
+impl Iterator for Lexer {
+    type Item = Token;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next_token()
+    }
+}
+
 impl Lexer {
     pub fn new(input: String) -> Lexer {
         let mut lexer = Lexer {
@@ -36,7 +44,7 @@ impl Lexer {
     fn read_identifier(&mut self) -> String {
         let position = self.position;
         let mut len = 0;
-        while self.is_letter(self.ch.unwrap()) {
+        while self.ch.is_some() && self.is_letter(self.ch.unwrap()) {
             len += 1;
             self.read_char();
         }
@@ -52,7 +60,7 @@ impl Lexer {
     fn read_number(&mut self) -> String {
         let position = self.position;
         let mut len = 0;
-        while self.is_digit(self.ch.unwrap()) {
+        while self.ch.is_some() && self.is_digit(self.ch.unwrap()) {
             len += 1;
             self.read_char();
         }
@@ -73,8 +81,18 @@ impl Lexer {
         ch.is_numeric()
     }
 
+    fn peek_char(&mut self) -> Option<char> {
+        if self.read_position >= self.input.len() {
+            return None;
+        }
+
+        self.input.chars().nth(self.read_position)
+    }
+
     fn is_known_single(&mut self, ch: char) -> bool {
-        let known_chars: Vec<char> = vec!['=', ';', '(', ')', ',', '+', '{', '}'];
+        let known_chars: Vec<char> = vec![
+            '=', ';', '(', ')', ',', '+', '{', '}', '-', '!', '/', '*', '<', '>',
+        ];
         known_chars.contains(&ch)
     }
 
@@ -84,42 +102,56 @@ impl Lexer {
         }
     }
 
-    fn process_char(&mut self, ch: char) -> Token {
+    fn process_char(&mut self, ch: char) -> Option<Token> {
         if self.is_known_single(ch) {
+            let next_ch = self.peek_char();
+
+            if (ch == '=' || ch == '!') && next_ch.is_some() {
+                let next_ch = next_ch.unwrap();
+
+                if next_ch == '=' {
+                    self.read_char();
+                    self.read_char();
+                    let literal = format!("{}{}", ch, next_ch);
+                    return Some(Token {
+                        token_type: Token::lookup_token(literal.as_str()),
+                        literal: String::from(literal),
+                    });
+                }
+            }
+
             self.read_char();
             let literal = ch.to_string();
-            Token {
+
+            Some(Token {
                 token_type: Token::lookup_token(literal.as_str()),
                 literal,
-            }
+            })
         } else if self.is_letter(ch) {
             let literal = self.read_identifier();
-            Token {
+            Some(Token {
                 token_type: Token::lookup_token(literal.as_str()),
                 literal,
-            }
+            })
         } else if self.is_digit(ch) {
-            Token {
+            Some(Token {
                 token_type: TokenType::Integer,
                 literal: self.read_number(),
-            }
+            })
         } else {
-            Token {
+            Some(Token {
                 token_type: TokenType::Illegal,
                 literal: String::from("illegal"),
-            }
+            })
         }
     }
 
-    pub fn next_token(&mut self) -> Token {
+    pub fn next_token(&mut self) -> Option<Token> {
         self.skip_whitespace();
 
-        let result: Token = match self.ch {
+        let result: Option<Token> = match self.ch {
             Some(ch) => self.process_char(ch),
-            None => Token {
-                token_type: TokenType::Illegal,
-                literal: String::from("illegal"),
-            },
+            _ => None,
         };
 
         return result;

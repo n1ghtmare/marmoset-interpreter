@@ -1,10 +1,16 @@
-#[derive(PartialEq, Debug, Clone)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Debug, Clone)]
 pub enum TokenType {
     Identifier,
     Integer,
     Assignment,
     Plus,
     Comma,
+    Minus,
+    Bang,
+    Slash,
+    Asterisk,
+    LowerThan,
+    GreaterThan,
     Semicolon,
     LeftParen,
     RightParen,
@@ -12,11 +18,17 @@ pub enum TokenType {
     RightBrace,
     Function,
     Let,
+    True,
+    False,
+    If,
+    Else,
+    Return,
+    Equal,
+    NotEqual,
     Illegal,
-    Eof,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Token {
     pub token_type: TokenType,
     pub literal: String,
@@ -42,8 +54,21 @@ impl Token {
             ")" => RightParen,
             "{" => LeftBrace,
             "}" => RightBrace,
+            "-" => Minus,
+            "!" => Bang,
+            "/" => Slash,
+            "*" => Asterisk,
+            "<" => LowerThan,
+            ">" => GreaterThan,
+            "==" => Equal,
+            "!=" => NotEqual,
             "fn" => Function,
             "let" => Let,
+            "true" => True,
+            "false" => False,
+            "if" => If,
+            "else" => Else,
+            "return" => Return,
             _ => Identifier,
         }
     }
