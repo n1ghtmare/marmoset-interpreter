@@ -30,10 +30,12 @@ pub struct Program {
 
 impl Node for Program {
     fn token_literal(&self) -> String {
-        if self.statements.len() > 0 {
-            return self.statements[0].token_literal();
-        }
-        String::from("")
+        let literal = if self.statements.len() > 0 {
+            self.statements[0].token_literal()
+        } else {
+            String::from("")
+        };
+        literal
     }
 }
 

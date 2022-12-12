@@ -3,6 +3,8 @@ mod lexer;
 mod parser;
 mod token;
 
+use lexer::*;
+use parser::*;
 use token::*;
 use TokenType::*;
 
@@ -36,6 +38,8 @@ fn main() {
 #[cfg(test)]
 use pretty_assertions::assert_eq;
 
+use crate::ast::Node;
+
 #[cfg(test)]
 fn assert_expected_results(input: String, expected_results: Vec<Token>) {
     let lexer = lexer::Lexer::new(input);
@@ -53,7 +57,6 @@ fn test_equality_operators() {
     assert_expected_results(input, expected_results);
 }
 
-// #[ignore]
 #[test]
 fn test_single_variable_binding() {
     let input = String::from("let _testing_a = 5;");
@@ -86,7 +89,6 @@ fn testing_if_statement() {
     assert_expected_results(input, expected_results);
 }
 
-// #[ignore]
 #[test]
 fn test_multi_byte_chars() {
     let input = String::from("let 猿猿 = 5;");
@@ -121,7 +123,6 @@ fn test_single_character_tokens() {
     assert_expected_results(input, expected_results);
 }
 
-// #[ignore]
 #[test]
 fn test_multiline_statements_with_keywords() {
     let input = String::from(
@@ -266,4 +267,29 @@ if (5 < 10) {
     ];
 
     assert_expected_results(input, expected_results);
+}
+
+// #[ignore]
+#[test]
+fn test_let_statements_parsing() {
+    let input = String::from(
+        "let x = 5;
+let y = 10;
+let foobar = 838383;
+",
+    );
+
+    let lexer = Lexer::new(input);
+
+    let parser = Parser::new(lexer);
+    let program = parser.parse_program();
+
+    assert!(program.is_some());
+
+    // Is this the best way to run those asserts? First check if is_some()? then panick if it isn't? Doesn't sound right, do some reasearch!
+    let program = program.expect("Failed to parse program");
+
+    // TODO: We could probably write better assert for these
+    assert_eq!(program.statements.len(), 3);
+    assert_eq!(program.statements[0].token_literal(), "let");
 }

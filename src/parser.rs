@@ -2,14 +2,15 @@ use crate::ast::*;
 use crate::lexer::*;
 use crate::token::*;
 
-struct Parser {
+pub struct Parser {
     lexer: Lexer,
     current_token: Option<Token>,
     peek_token: Option<Token>,
 }
 
+#[allow(dead_code)]
 impl Parser {
-    fn new(&self, lexer: Lexer) -> Parser {
+    pub fn new(lexer: Lexer) -> Parser {
         let mut p = Parser {
             lexer,
             current_token: None,
@@ -17,16 +18,18 @@ impl Parser {
         };
         p.next_token();
         p.next_token();
-        return p;
+        p
     }
 
     fn next_token(&mut self) {
-        // self.current_token = self.peek_token.clone();
-        // self.peek_token = Some(self.lexer.next_token());
+        self.current_token = self.peek_token.clone();
+        self.peek_token = self.lexer.next_token();
     }
 
-    fn parse_program(&self) -> Program {
-        let program = Program { statements: vec![] };
+    pub fn parse_program(&self) -> Option<Program> {
+        let program = Program {
+            statements: Vec::new(),
+        };
 
         todo!();
         // while self.current_token.clone().unwrap().token_type != TokenType::Eof {
@@ -35,7 +38,7 @@ impl Parser {
         //         // program.statements.push(statement);
         //     }
         // }
-        program
+        Some(program)
     }
 
     fn parse_statement(&self) -> Option<Box<dyn Statement>> {
