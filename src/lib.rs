@@ -255,7 +255,7 @@ let foobar = 838383;
 
     let lexer = lexer::Lexer::new(input);
 
-    let parser = parser::Parser::new(lexer);
+    let mut parser = parser::Parser::new(lexer);
     let program = parser.parse_program();
 
     assert!(program.is_some());
@@ -265,5 +265,11 @@ let foobar = 838383;
 
     // TODO: We could probably write better assert for these
     assert_eq!(program.statements.len(), 3);
-    assert_eq!(program.statements[0].token_literal(), "let");
+
+    let s = program
+        .statements
+        .first()
+        .expect("Failed to get the first statement");
+
+    assert_eq!(s.token_literal(), "let");
 }

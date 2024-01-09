@@ -25,6 +25,7 @@ pub enum TokenType {
     Return,
     Equal,
     NotEqual,
+    Eof,
     Illegal,
 }
 

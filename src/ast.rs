@@ -30,17 +30,18 @@ pub struct Program {
 
 impl Node for Program {
     fn token_literal(&self) -> String {
-        if !self.statements.is_empty() {
-            self.statements[0].token_literal()
+        if let Some(node) = self.statements.first() {
+            node.token_literal()
         } else {
             String::from("")
         }
     }
 }
 
-struct Identifier {
-    token: Token, // the token IDENT
-    value: String,
+#[derive(Debug)]
+pub struct Identifier {
+    pub token: Token, // the token IDENT
+    pub value: String,
 }
 
 impl Node for Identifier {
@@ -55,10 +56,11 @@ impl Expression for Identifier {
     }
 }
 
+#[derive(Debug)]
 pub struct LetStatement {
-    token: Token, // the token LET
-    name: Identifier,
-    value: Box<dyn Expression>,
+    pub token: Token, // the token LET
+    pub name: Identifier,
+    // value: Box<dyn Expression>,
 }
 
 impl Node for LetStatement {

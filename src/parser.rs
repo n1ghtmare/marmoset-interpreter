@@ -1,4 +1,4 @@
-use crate::ast::{LetStatement, Program, Statement};
+use crate::ast::{Identifier, LetStatement, Program, Statement};
 use crate::lexer::Lexer;
 use crate::token::{Token, TokenType};
 
@@ -26,35 +26,51 @@ impl Parser {
         self.peek_token = self.lexer.next();
     }
 
-    pub fn parse_program(&self) -> Option<Program> {
-        let program = Program {
+    pub fn parse_program(&mut self) -> Option<Program> {
+        let mut program = Program {
             statements: Vec::new(),
         };
 
-        todo!();
-        // while self.current_token.clone().unwrap().token_type != TokenType::Eof {
-        //     let statement = self.parse_statement();
-        //     if statement.is_some() {
-        //         // program.statements.push(statement);
-        //     }
-        // }
+        while let Some(token) = &self.current_token {
+            if token.token_type == TokenType::Eof {
+                break;
+            }
+
+            if let Some(statement) = self.parse_statement() {
+                program.statements.push(statement);
+            }
+
+            self.next_token();
+        }
+
         Some(program)
     }
 
     fn parse_statement(&self) -> Option<Box<dyn Statement>> {
-        if !self.current_token.is_some() {
-            return None;
-        }
-
-        todo!();
-        let token = self.current_token.unwrap();
-        match token.token_type {
-            TokenType::Let => todo!(),
-            _ => None,
+        if let Some(token) = &self.current_token {
+            match token.token_type {
+                TokenType::Let => self
+                    .parse_let_statement()
+                    .map(|statement| Box::new(statement) as Box<dyn Statement>),
+                _ => None,
+            }
+        } else {
+            None
         }
     }
 
-    fn parse_let_statement(&self) -> Option<Box<LetStatement>> {
-        todo!()
+    fn parse_let_statement(&self) -> Option<LetStatement> {
+        if let Some(token) = &self.current_token {
+            let statement = LetStatement {
+                token: token.clone(),
+                name: Identifier {
+                    token: token.clone(),
+                    value: token.clone().literal,
+                },
+            };
+            Some(statement)
+        } else {
+            None
+        }
     }
 }
