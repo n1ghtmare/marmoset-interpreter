@@ -20,6 +20,14 @@ impl Iterator for Lexer {
     }
 }
 
+fn is_letter(ch: char) -> bool {
+    ch.is_alphabetic() || ch == '_'
+}
+
+fn is_digit(ch: char) -> bool {
+    ch.is_numeric()
+}
+
 impl Lexer {
     pub fn new(input: String) -> Lexer {
         let mut lexer = Lexer {
@@ -48,9 +56,14 @@ impl Lexer {
     fn read_identifier(&mut self) -> String {
         let position = self.position;
         let mut len = 0;
-        while self.ch.is_some() && self.is_letter(self.ch.unwrap()) {
-            len += 1;
-            self.read_char();
+
+        while let Some(ch) = self.ch {
+            if is_letter(ch) {
+                len += 1;
+                self.read_char();
+            } else {
+                break;
+            }
         }
 
         self.input
@@ -63,9 +76,14 @@ impl Lexer {
     fn read_number(&mut self) -> String {
         let position = self.position;
         let mut len = 0;
-        while self.ch.is_some() && self.is_digit(self.ch.unwrap()) {
-            len += 1;
-            self.read_char();
+
+        while let Some(ch) = self.ch {
+            if is_digit(ch) {
+                len += 1;
+                self.read_char();
+            } else {
+                break;
+            }
         }
 
         self.input
@@ -73,14 +91,6 @@ impl Lexer {
             .skip(position)
             .take(len)
             .collect::<String>()
-    }
-
-    fn is_letter(&mut self, ch: char) -> bool {
-        ch.is_alphabetic() || ch == '_'
-    }
-
-    fn is_digit(&mut self, ch: char) -> bool {
-        ch.is_numeric()
     }
 
     fn peek_char(&mut self) -> Option<char> {
@@ -131,13 +141,13 @@ impl Lexer {
                 token_type: Token::lookup_token(literal.as_str()),
                 literal,
             })
-        } else if self.is_letter(ch) {
+        } else if is_letter(ch) {
             let literal = self.read_identifier();
             Some(Token {
                 token_type: Token::lookup_token(literal.as_str()),
                 literal,
             })
-        } else if self.is_digit(ch) {
+        } else if is_digit(ch) {
             Some(Token {
                 token_type: TokenType::Integer,
                 literal: self.read_number(),
