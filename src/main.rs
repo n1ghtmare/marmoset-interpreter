@@ -20,7 +20,7 @@ fn main() {
     ];
 
     for result in expected_results {
-        let tok = lexer.next_token().unwrap();
+        let tok = lexer.next().unwrap();
         println!("literal: {}", tok.literal);
 
         dbg!(tok.token_type, result.token_type);

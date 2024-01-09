@@ -11,7 +11,12 @@ impl Iterator for Lexer {
     type Item = Token;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.next_token()
+        self.skip_whitespace();
+
+        match self.ch {
+            Some(ch) => self.process_char(ch),
+            _ => None,
+        }
     }
 }
 
@@ -142,15 +147,6 @@ impl Lexer {
                 token_type: TokenType::Illegal,
                 literal: String::from("illegal"),
             })
-        }
-    }
-
-    pub fn next_token(&mut self) -> Option<Token> {
-        self.skip_whitespace();
-
-        match self.ch {
-            Some(ch) => self.process_char(ch),
-            _ => None,
         }
     }
 }
