@@ -1,4 +1,4 @@
-use crate::token::*;
+use crate::token::Token;
 
 pub trait Node {
     fn token_literal(&self) -> String;
@@ -30,12 +30,11 @@ pub struct Program {
 
 impl Node for Program {
     fn token_literal(&self) -> String {
-        let literal = if self.statements.len() > 0 {
+        if !self.statements.is_empty() {
             self.statements[0].token_literal()
         } else {
             String::from("")
-        };
-        literal
+        }
     }
 }
 

@@ -1,6 +1,6 @@
-use crate::ast::*;
-use crate::lexer::*;
-use crate::token::*;
+use crate::ast::{LetStatement, Program, Statement};
+use crate::lexer::Lexer;
+use crate::token::{Token, TokenType};
 
 pub struct Parser {
     lexer: Lexer,

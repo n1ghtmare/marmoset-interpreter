@@ -1,4 +1,4 @@
-use crate::token::*;
+use crate::token::{Token, TokenType};
 
 pub struct Lexer {
     input: String,
@@ -25,8 +25,7 @@ impl Lexer {
         };
 
         lexer.read_char();
-
-        return lexer;
+        lexer
     }
 
     // read characters one by one if we reach the end ? return None
@@ -49,12 +48,11 @@ impl Lexer {
             self.read_char();
         }
 
-        return self
-            .input
+        self.input
             .chars()
             .skip(position)
             .take(len)
-            .collect::<String>();
+            .collect::<String>()
     }
 
     fn read_number(&mut self) -> String {
@@ -65,12 +63,11 @@ impl Lexer {
             self.read_char();
         }
 
-        return self
-            .input
+        self.input
             .chars()
             .skip(position)
             .take(len)
-            .collect::<String>();
+            .collect::<String>()
     }
 
     fn is_letter(&mut self, ch: char) -> bool {
@@ -106,17 +103,19 @@ impl Lexer {
         if self.is_known_single(ch) {
             let next_ch = self.peek_char();
 
-            if (ch == '=' || ch == '!') && next_ch.is_some() {
-                let next_ch = next_ch.unwrap();
+            if ch == '=' || ch == '!' {
+                if let Some(next_ch) = next_ch {
+                    if next_ch == '=' {
+                        self.read_char();
+                        self.read_char();
 
-                if next_ch == '=' {
-                    self.read_char();
-                    self.read_char();
-                    let literal = format!("{}{}", ch, next_ch);
-                    return Some(Token {
-                        token_type: Token::lookup_token(literal.as_str()),
-                        literal: String::from(literal),
-                    });
+                        let literal = format!("{}{}", ch, next_ch);
+
+                        return Some(Token {
+                            token_type: Token::lookup_token(literal.as_str()),
+                            literal,
+                        });
+                    }
                 }
             }
 
@@ -149,11 +148,9 @@ impl Lexer {
     pub fn next_token(&mut self) -> Option<Token> {
         self.skip_whitespace();
 
-        let result: Option<Token> = match self.ch {
+        match self.ch {
             Some(ch) => self.process_char(ch),
             _ => None,
-        };
-
-        return result;
+        }
     }
 }
